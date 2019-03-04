@@ -4,12 +4,17 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
-
+const mongoose = require('mongoose');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 
 const app = express();
+
+// Database connection 
+// const [dbHost, dbName] = app.settings.env === 'development' ? ['localhost', 'real-world'] : [`${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}${process.env.DB_KEY}`, `${process.env.DB_NAME}`];
+const [dbHost, dbName] = ['localhost', 'mc-dashboard'];
+const dbConn = `mongodb://${dbHost}/${dbName}`;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -29,6 +34,15 @@ const corsOptions = {
   methods: ['GET', 'PUT', 'POST', 'OPTIONS']
 };
 app.use(cors(corsOptions));
+
+// Initilise mongoose
+mongoose.connect(dbConn, (err) => {
+  if (err) {
+    console.log('Error connecting to database', err);
+  } else {
+    console.log(`Connected to database!`);
+  }
+});
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
