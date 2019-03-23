@@ -12,8 +12,9 @@ const usersRouter = require('./routes/users');
 const app = express();
 
 // Database connection 
-// const [dbHost, dbName] = app.settings.env === 'development' ? ['localhost', 'real-world'] : [`${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}${process.env.DB_KEY}`, `${process.env.DB_NAME}`];
-const [dbHost, dbName] = ['localhost', 'mc-dashboard'];
+const [dbHost, dbName] = app.settings.env === 'development'
+ ? ['localhost', 'mc-dashboard']
+ : [`${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}${process.env.DB_KEY}`, `${process.env.DB_NAME}`];
 const dbConn = `mongodb://${dbHost}/${dbName}`;
 
 // view engine setup
@@ -28,20 +29,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Configure CORS
 const corsOptions = {
-  // origin: app.settings.env === 'production' ? // insert production client here : ['http://localhost:3001'],
-  origin: ['http://localhost:3001'],
-  credentials: true,
-  methods: ['GET', 'PUT', 'POST', 'OPTIONS']
+ // origin: app.settings.env === 'production' ? // insert production client here : ['http://localhost:3001'],
+ origin: ['http://localhost:3001'],
+ credentials: true,
+ methods: ['GET', 'PUT', 'POST', 'OPTIONS']
 };
 app.use(cors(corsOptions));
 
 // Initilise mongoose
-mongoose.connect(dbConn, (err) => {
-  if (err) {
-    console.log('Error connecting to database', err);
-  } else {
-    console.log(`Connected to database!`);
-  }
+mongoose.connect(dbConn, { useNewUrlParser: true }, (err) => {
+ if (err) {
+  console.log('Error connecting to database', err);
+ } else {
+  console.log(`Connected to database!`);
+ }
 });
 
 app.use('/', indexRouter);
@@ -49,18 +50,18 @@ app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  next(createError(404));
+ next(createError(404));
 });
 
 // error handler
 app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+ // set locals, only providing error in development
+ res.locals.message = err.message;
+ res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+ // render the error page
+ res.status(err.status || 500);
+ res.render('error');
 });
 
 module.exports = app;

@@ -25,6 +25,7 @@ class LandingPage extends Component {
         const { initial } = this.state
         return (
             <div>
+                <h1>REACT APP RUNNING</h1>
                 {initial}
             </div>
         )
